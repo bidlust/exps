@@ -1,0 +1,21 @@
+python 二分法查找
+
+# 给定一个排好序（升序）的列表与待查找的关键字，成功则返回其索引，失败则返回-1。
+
+def search(list, key):
+    left = 0     # 左边界
+    right = len(list) - 1   # 右边界
+    while left <= right:
+        mid = (left + right) // 2  # 取得中间索引
+        if key > list[mid]:
+            left = mid + 1
+        elif key < list[mid]:
+            right = mid - 1
+        else:
+            return mid
+    else:
+        return -1
+
+list = [2, 5, 13, 21, 26, 33, 37]
+print(search(list, 5))
+

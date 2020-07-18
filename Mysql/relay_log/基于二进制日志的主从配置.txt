@@ -1,0 +1,3 @@
+基于二进制中继日志的主从配置：
+
+https://www.jianshu.com/p/208667156faf
