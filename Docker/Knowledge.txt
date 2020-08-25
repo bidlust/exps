@@ -1,0 +1,2 @@
+1. gitlab docker安装
+https://www.jianshu.com/p/ce6d0bd7113a
