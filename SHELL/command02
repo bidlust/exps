@@ -1,0 +1,28 @@
+1. 如何实时观察TCP和UDP端口？
+列出Linux中的所有开放端口
+
+$ sudo netstat -tulpn
+OR
+$ sudo ss -tulpn
+
+从以上命令的输出中，“ 状态”列显示端口是否处于监听状态（ LISTEN ）。
+
+在上面的命令中，标志：
+
+-t –启用TCP端口列表。
+-u –启用UDP端口列表。
+-l –仅输出监听套接字。
+-n –显示端口号。
+-p –显示进程/程序名称。
+
+实时观察TCP和UDP开放端口
+但是，要实时监视TCP和UDP端口，可以使用所示的watch实用程序运行netstat或ss工具 。
+
+$ sudo watch netstat -tulpn
+OR
+$ sudo watch ss -tulpn
+
+Linux中实时观察开放端口
+
+要退出，请按Ctrl+C
+

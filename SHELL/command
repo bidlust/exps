@@ -1,0 +1,59 @@
+1.
+场景1：服务器磁盘满，一般由大的日志文件导致，需找到大文件并删除。
+
+解决1: find / -size +500M -print0|xargs -0 du -m|sort -nr
+
+解决2：上述方法从根路径查找，可能列出一些系统文件。可以在这个查找之前先进行一下过滤。
+
+使用du -m -d 1 /|sort -nr  先看看根路径下，哪个文件夹比较大，并且有嫌疑是导致磁盘满的罪魁祸首。然后再基于那个目录进行find。
+场景2: 记得写过一个xxx.c的文件，但是忘了放哪里了
+
+解决： find / -name *xxx*.c 模糊查找下这个文件
+
+
+2.
+sshclient连接linux,中文乱码
+LANG="zh-CN.GBK"
+
+3.
+windows查看端口占用
+netstat -aon | finstr 80 
+
+此时，我们发现80端口已被占用，该进程PID为14872, 可以通过以下命令查看该进程：
+tasklist | findstr 14872
+
+通过以下命令结束进程：
+taskkill /pid 14872
+
+也可通过Windows进程管理器查看该进程相关信息，使用任务管理器关闭该进程。
+
+4.
+linux查看端口占用情况
+netstat -tunpl |grep 80
+我们可以看到， nginx占用了80端口。进程id为2162。随后，我们可以通过以下命令了解该进程情况：
+
+ps aux | grep 2162
+
+通过以下命令，查看该进程更加详细的情况：
+ls -al /proc/2162
+结束该进程：
+kill -9 2162
+
+5. flask返回302重定向，同时返回json格式消息：
+return make_response(jsonify({...}), 302, {'location': url_for(...)})
+
+
+6.
+shell排序先，再去重，再重新排序；
+cat index.ids.txt | sort | uniq | sort -r | head -10
+
+
+7.
+flask设置cookie有效期
+
+res = make_response(redirect(url_for(...)))
+res.set_cookie('umkey', login_id, max_age=user_timeout)
+return res 
+
+8.
+python redis设置有效期：

@@ -1,0 +1,83 @@
+1. 创建管理账户
+
+https://www.cyberciti.biz/faq/opensuse-install-sudo-to-execute-commands-as-root/
+  
+
+2. 15.0执行系统更新至15.2
+
+查看当前软件源：
+zypper lr 
+
+
+备份现有源：
+sudo cp -Rv /etc/zypp/repos.d /etc/zypp/repos.d.Old
+
+
+
+ 替换 openSUSE 15.0 源为 openSUSE 15.1 源：
+sudo sed -i 's/15.0/15.1/g' /etc/zypp/repos.d/*
+
+如果复制上面的命令到控制台出现字符错误提示，那么手动输入。
+
+ 刷新源：
+sudo zypper --gpg-auto-import-keys ref
+
+更新：
+sudo zypper dup
+
+更新完毕后，重启系统
+shutdown -r now
+
+重启后，查看系统信息。
+
+cat /etc/os-release
+
+参考：
+https://blog.csdn.net/weixin_43226231/article/details/103773858
+https://6ki.org/2019/05/upgrade-from-opensuse-15-0-to-opensuse-15-1.html
+
+
+3. 创建交换分区
+创建交换分区目录及文件
+sudo mkdir -p /var/lib/swap
+sudo dd if=/dev/zero of=/var/lib/swap/swapfile bs=1M count=2048
+chmod 600 /var/lib/swap/swapfile
+
+ 初始化分区
+sudo mkswap /var/lib/swap/swapfile
+
+激活分区
+sudo swapon /var/lib/swap/swapfile
+
+
+检测当前分区可用空间
+cat /proc/swaps
+
+加入系统设置，防止重启后丢失
+/var/lib/swap/swapfile swap swap defaults 0 0
+参考：
+https://doc.opensuse.org/documentation/leap/reference/html/book.opensuse.reference/cha-expert-partitioner.html
+
+4. 内核参数优化；
+
+5. 安装Mariadb
+sudo zypper removerepo mariadb
+sudo zypper addrepo --gpgcheck --refresh https://yum.mariadb.org/10.5/opensuse15-amd64/ mariadb
+sudo zypper --gpg-auto-import-keys refresh
+
+sudo zypper install MariaDB-server galera-5 MariaDB-client MariaDB-shared MariaDB-backup MariaDB-common
+
+参考： https://mariadb.com/kb/en/installing-mariadb-with-zypper/
+
+
+6.安装java
+sudo zypper in java-1_8_0-openjdk
+sudo zypper in java-1_8_0-openjdk-devel
+
+7. 安装scala
+sudo zypper in scala
+
+
+
+
+

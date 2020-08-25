@@ -1,0 +1,201 @@
+[client]
+
+port = 3306
+
+socket = /tmp/mysql.sock  
+
+default-character-set=utf8mb4 
+
+[mysqld]
+
+server-id = 1
+
+port = 3306
+
+user = mysql 
+
+basedir = /
+
+datadir = 
+
+tmpdir = /tmp 
+
+socket = /tmp/mysql.sock 
+
+transaction_isolation = REPEATABLE-READ
+
+default_storage_engine = InnoDB
+
+default_tmp_storage_engine = InnoDB
+
+internal_tmp_disk_storage_engine = InnoDB
+
+character-set-server = utf8mb4
+
+collation_server=utf8mb4_general_ci
+
+init_connect='SET NAMES utf8mbb4'
+
+lower_case_table_names = 1
+
+max_connections = 10240
+
+max_user_connections = 1000
+
+max_connect_errors = 10000
+
+open_files_limit = 65535
+
+interactive_timeout = 1800 
+
+wait_timeout = 1800 
+
+back_log = 900
+
+max_allowed_packet = 128M
+
+tmp_table_size = 16M
+
+max_heap_table_size = 16M
+
+query_cache_type = 1
+
+query_cache_size = 128M 
+
+query_cache_limit = 2M
+
+binlog_cache_size = 1M
+
+
+
+#MyISAM 
+
+key_buffer_size = 64M
+
+read_buffer_size = 262144
+
+read_rnd_buffer_size = 2M
+
+
+sort_buffer_size = 2M
+
+join_buffer_size = 2M
+
+#INNODB
+
+innodb_page_cleaners = 4
+
+innodb_page_size = 16384
+
+innodb_buffer_pool_size  = 1G
+
+innodb_buffer_pool_instances = 4
+
+innodb_buffer_pool_chunk_size = 128M
+
+innodb_buffer_pool_load_at_startup = 1
+
+innodb_buffer_pool_dump_at_shutdown = 1
+
+innodb_lru_scan_depth = 1024
+
+innodb_lock_wait_timeout = 60
+
+innodb_io_capacity_max = 2000
+
+innodb_flush_method  = O_DIRECT
+
+innodb_file_per_table = 1
+
+innodb_undo_directory = /var/log/innodb/log
+
+innodb_log_group_home_dir = /var/log/innodb/log
+
+innodb_log_file_size = 128M
+
+innodb_log_files_in_group = 3
+
+innodb_log_buffer_size = 16M
+
+innodb_flush_log_at_timeout = 1
+
+innodb_flush_log_at_trx_commit = 1
+
+innodb_open_files = 2000
+
+innodb_read_io_threads = 4
+
+innodb_thread_concurrency = 0
+
+innodb_purge_threads = 4
+
+innodb_old_blocks_pct = 37
+
+innodb_old_blocks_time=1000
+
+innodb_use_native_aio = 1
+
+innodb_write_io_threads = 4
+
+innodb_additional_mem_pool_size = 16M
+
+explicit_defaults_for_timestamp = 0
+
+[mysqldump]
+quick
+max_allowed_packet = 16M
+
+
+
+
+#LOG DEFINATION
+log_error_verbosity = 3
+
+general_log = 0
+
+general_log_file = 
+
+log-error = 
+
+slow_query_log = 1
+
+long_query_time = 3
+
+min_examined_row_limit = 0
+
+log_throttle_queries_not_using_indexes = 0
+
+slow_query_log_file = 
+
+log-queries-not-using-indexes = 1
+
+# log_bin = /usr/local/mysql-5.7.21/log/mysql-bin.log
+
+# expire_logs_days = 0
+
+# max_binlog_size  = 1000M
+
+# binlog_format = row
+
+# sync_binlog = 1 
+
+
+[mysql]
+
+auto-rehash
+
+socket = /tmp/mysql.sock
+
+default-character-set=utf8mb4
+
+
+
+
+
+
+
+
+
+
+
+

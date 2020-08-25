@@ -1,0 +1,28 @@
+1. 查看python所有关键字：
+import keyword
+keyword.kwlist
+
+
+2. websocket 超时：
+https://blog.csdn.net/keketrtr/article/details/72864914
+
+3.
+Django配置Celery执行异步任务和定时任务
+https://cloud.tencent.com/developer/article/1193731
+
+4.
+Django websocket之web端实时查看日志实践案例
+
+https://www.cnblogs.com/37Y37/p/11274102.html
+
+5.
+如何在另一个bash会话中查看正在运行的进程的输出？
+https://qastack.cn/unix/58550/how-to-view-the-output-of-a-running-process-in-another-bash-session
+
+6.
+https://blog.huoding.com/2015/10/16/474
+手把手教你用Strace诊断问题
+
+7.
+mysql group by 优化
+https://juejin.im/post/5bcd6286e51d4579e5667e99
