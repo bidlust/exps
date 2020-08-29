@@ -1,2 +1,17 @@
 1. gitlab docker安装
 https://www.jianshu.com/p/ce6d0bd7113a
+https://blog.csdn.net/BADAO_LIUMANG_QIZHI/article/details/101039801
+
+docker run -d -p 8443:443 -p 8090:80 -p 8022:22 --name gitlab --restart always -v /var/lib/gitlab/etc:/etc/gitlab -v /var/lib/gitlab/logs:/var/log/gitlab -v /var/lib/gitlab/data:/var/opt/gitlab -v /etc/localtime:/etc/localtime:ro --privileged=true gitlab/gitlab-ce 
+
+
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "smtp.qq.com"
+gitlab_rails['smtp_port'] = 465
+gitlab_rails['smtp_user_name'] = "bidlust@qq.com"
+gitlab_rails['smtp_password'] = "fpbigauvgdhpbjdf"
+gitlab_rails['smtp_domain'] = "smtp.qq.com"
+gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+gitlab_rails['smtp_tls'] = true
+gitlab_rails['gitlab_email_from'] = 'bidlust@qq.com'
