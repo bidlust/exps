@@ -1,0 +1,17 @@
+下载地址：
+
+https://github.com/MicrosoftArchive/redis/releases
+
+设置密码：
+requirepass 123456
+
+启动：
+.\redis-server .\redis.windows.conf
+
+设置为系统服务：
+.\redis-server --service-install .\redis.windows-service.conf --loglevel verbose
+
+
+
+参考：
+https://www.cnblogs.com/yunqing/p/10605934.html
