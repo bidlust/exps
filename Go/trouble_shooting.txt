@@ -1,0 +1,38 @@
+1.
+golang return省略用法
+golang函数如果返回值定义了变量，return后边必须跟着表达式或者值
+
+func main() {
+	fmt.Println("-------", test())
+}
+func test() (n string) {
+	n = "hello"
+	return
+}
+如果没有定义变量，return必须显示地返回对象
+
+func main() {
+	fmt.Println("-------", test())
+}
+func test() string {
+	n := "hello"
+	return n
+}
+ 
+ 
+ 
+https://blog.csdn.net/david___/article/details/99673246
+
+
+2.
+go 操作Mysql
+https://www.cnblogs.com/hanyouchun/p/6708037.html
+https://studygolang.com/articles/13655
+
+3.
+golang如何使用struct的tag属性
+https://www.jianshu.com/p/c7d5c1c8a2d8
+
+4.
+golang new 函数的使用
+https://studygolang.com/articles/20751

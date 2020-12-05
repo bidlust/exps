@@ -15,3 +15,28 @@ gitlab_rails['smtp_authentication'] = "login"
 gitlab_rails['smtp_enable_starttls_auto'] = true
 gitlab_rails['smtp_tls'] = true
 gitlab_rails['gitlab_email_from'] = 'bidlust@qq.com'
+
+
+
+version: '3'
+services:
+    web:
+      image: 'gitlab/gitlab-ce'   #gitlab镜像
+      restart: always                  
+      hostname: '192.168.208.134'       #主机名,即虚拟机的ip
+      environment:
+        TZ: 'Asia/Shanghai'       
+        GITLAB_OMNIBUS_CONFIG: |
+          external_url 'http://192.168.208.134'    #外部访问地址
+          gitlab_rails['gitlab_shell_ssh_port'] = 2222   #22端口已经被占用
+          unicorn['port'] = 8888
+          nginx['listen_port'] = 80  #这里的监听端口要与外部地址端口一致 80  则可省略
+      ports:
+        - '80:80'
+        - '8443:443'
+        - '2222:22'
+      volumes:                          #数据卷挂载
+        - /var/lib/gitlib/etc:/etc/gitlab
+        - /var/lib/gitlab/data:/var/opt/gitlab
+        - /var/lib/gitlab/logs:/var/log/gitlab
+		- /etc/localtime:/etc/localtime:ro
