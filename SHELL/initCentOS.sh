@@ -36,6 +36,7 @@ echo "******Do OS Init Work For You******"
 echo "***********************************"
 echo "***********************************"
 
+sleep 3
 
 #检测当前执行用户名；
 if [ $(whoami | tr '[A-Z]' '[a-z']) != 'root' ];then
@@ -104,7 +105,7 @@ if [ -f $sshFile ];then
 	if [ -z "$current_ssh_port" ];then
 		current_ssh_port=22 
 	fi 
-	
+	echo "backup ssh file..." && cp $sshFile /root/backup/ && "[SUCCESS] - backup OK!"
 	while read -n 1 -p "Your current ssh port is $current_ssh_port , do you want to set another different one? [y/n] ";do 
 		case $REPLY  in 
 			( Y | y)
