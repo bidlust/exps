@@ -124,7 +124,7 @@ sleep $spNum
 	yum clean all
 	yum makecache
 	if [ $? -ne 0 ];then
-		echo "[Error] yum source modify failed"
+		send_error "yum source modify failed"
 		exit 1
 	fi 
 } || { 
@@ -140,7 +140,7 @@ yum -y update
 
 send_info "install basic develop tools..."
 sleep $spNum
-yum install -y gcc gcc-c++ lrzsz* netstat-tools nmap makecache unzip zip make autoconf
+yum install -y gcc gcc-c++ lrzsz* netstat-tools net-tools nmap makecache unzip zip make autoconf dos2unix wget 
 
 send_info "config ssh port to ${sshPort}..."
 sleep $spNum

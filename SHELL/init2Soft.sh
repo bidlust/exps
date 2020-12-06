@@ -68,6 +68,9 @@ prof="/etc/profile"
 mgrepo="/etc/yum.repos.d/mongodb-org-3.4.repo"
 spNum=3
 pysoft="https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz"
+mgsoft="wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.17.tgz"
+mglog="/var/log/mongodb/mongod.log"
+mgdata="/var/data"
 
 [ `echo $USER | tr '[A-Z]' '[a-z]' | grep root` != 'root' ] && {
 	send_error "Please use root account login and operate!"
@@ -184,7 +187,7 @@ tar -xvJf  Python-3.7.2.tar.xz
 cd Python-3.7.2
 ./configure --prefix=/usr/local/python3 --enable-optimizations --with-ssl 
 make && make install
-echo "export \$PATH=\$PATH:/usr/local/python3" >> ${prof}
+echo "export PATH=\$PATH:/usr/local/python3/bin" >> ${prof}
 source ${prof}
 python3 -V
 pip3 -V 
@@ -196,17 +199,25 @@ yum install -y redis
 systemctl start redis.service 
 
 send_info "Install mongodb..."
-cat >> ${mgrepo} << EOF
-[mongodb-org-3.4]  
-name=MongoDB Repository  
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/  
-gpgcheck=1  
-enabled=1  
-gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc  
-EOF
+[ ! -d ${mglog} ] && mkdir ${mglog} && send_success "create ${mglog}  OK!"
+[ ! -d ${mgdata} ] && mkdir ${mgdata} && send_success "create ${mgdata}  OK!"
+cd /root/download 
+[ ! -f ./mongodb-linux-x86_64-4.0.17.tgz ] && wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.17.tgz
+tar -zxvf mongodb-linux-x86_64-4.0.17.tgz
+mv mongodb-linux-x86_64-4.0.17 /usr/local/mongodb 
+cd /usr/local/mongodb
+echo "dbpath=${mgdata}" >> ./mongod.cfg
+echo "logpath=${mglog}" >> ./mongod.cfg
+echo "logappend=true " >> ./mongod.cfg
+echo "port=27017 " >> ./mongod.cfg
+echo "# fork=true " >> ./mongod.cfg
+echo "# auth=true " >> ./mongod.cfg
+echo "bind_ip=127.0.0.1" >> ./mongod.cfg
+[ -z `grep mongodb ${prof}` ] && echo "export PATH=\$PATH:/usr/local/mongodb/bin" >> ${prof}
 
-yum install -y mongodb-org
-systemctl start mongod.service
+source ${prof}
+mongod --config /usr/local/mongodb/mongod.cfg
+
 
 
 
