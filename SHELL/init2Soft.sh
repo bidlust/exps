@@ -72,6 +72,7 @@ pysoft="https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz"
 mgsoft="wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.17.tgz"
 mglog="/var/log/mongodb/mongod.log"
 mgdata="${dataDir}/mongodb"
+sqlLog="/var/log/mysql"
 
 [ `echo $USER | tr '[A-Z]' '[a-z]' | grep root` != 'root' ] && {
 	send_error "Please use root account login and operate!"
@@ -88,7 +89,7 @@ yum install -y install nginx
 
 send_info "Install Mariadb>>>"
 sleep $spNum
-[ ! -d /var/log/mysql ] && mkdir /var/log/mysql && send_success "mysql log folder created OK!"
+[ ! -d ${sqlLog} ] && mkdir ${sqlLog} && chown mysql:mysql ${sqlLog} && send_success "mysql log folder ${sqlLog} created OK!"
 [ ! -z `rpm -qa|grep maria` ] && {
 	send_info "remove mariadb packages..."
 	rpm -e --nodeps `rpm -qa|grep maria` && send_success "mariadb packages removed OK!" || send_error "mariadb packages removed Failed!"
