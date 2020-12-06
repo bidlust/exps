@@ -65,12 +65,13 @@ hostname="slt-dev"
 osVersion="/etc/redhat-release"
 lockfile="/tmp/slt-dev"
 prof="/etc/profile"
+dataDir="/var/data"
 mgrepo="/etc/yum.repos.d/mongodb-org-3.4.repo"
 spNum=3
 pysoft="https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz"
 mgsoft="wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.17.tgz"
 mglog="/var/log/mongodb/mongod.log"
-mgdata="/var/data"
+mgdata="${dataDir}/mongodb"
 
 [ `echo $USER | tr '[A-Z]' '[a-z]' | grep root` != 'root' ] && {
 	send_error "Please use root account login and operate!"
@@ -199,24 +200,27 @@ yum install -y redis
 systemctl start redis.service 
 
 send_info "Install mongodb..."
-[ ! -d ${mglog} ] && mkdir ${mglog} && send_success "create ${mglog}  OK!"
-[ ! -d ${mgdata} ] && mkdir ${mgdata} && send_success "create ${mgdata}  OK!"
+[ ! -d ${mglog} ] && mkdir -p ${mglog} && send_success "create ${mglog}  OK!"
+[ ! -d ${mgdata} ] && mkdir -p ${mgdata} && send_success "create ${mgdata}  OK!"
 cd /root/download 
 [ ! -f ./mongodb-linux-x86_64-4.0.17.tgz ] && wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-4.0.17.tgz
-tar -zxvf mongodb-linux-x86_64-4.0.17.tgz
+[ ! -d ./mongodb-linux-x86_64-4.0.17 ] && tar -zxvf mongodb-linux-x86_64-4.0.17.tgz
 mv mongodb-linux-x86_64-4.0.17 /usr/local/mongodb 
 cd /usr/local/mongodb
 echo "dbpath=${mgdata}" >> ./mongod.cfg
 echo "logpath=${mglog}" >> ./mongod.cfg
 echo "logappend=true " >> ./mongod.cfg
 echo "port=27017 " >> ./mongod.cfg
-echo "# fork=true " >> ./mongod.cfg
+echo "fork=true " >> ./mongod.cfg
 echo "# auth=true " >> ./mongod.cfg
 echo "bind_ip=127.0.0.1" >> ./mongod.cfg
 [ -z `grep mongodb ${prof}` ] && echo "export PATH=\$PATH:/usr/local/mongodb/bin" >> ${prof}
 
+chown admin:admin -R /usr/local/mongodb
+chown admin:admin -R ${mglog}
+chown admin:admin -R ${mgdata}
 source ${prof}
-mongod --config /usr/local/mongodb/mongod.cfg
+sudo admin mongod --config /usr/local/mongodb/mongod.cfg
 
 
 

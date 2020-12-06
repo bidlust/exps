@@ -66,6 +66,8 @@ osVersion="/etc/redhat-release"
 lockfile="/tmp/slt-dev"
 prof="/etc/profile"
 spNum=3
+dataDir="/var/data"
+
 
 [ -f ${lockfile} ] && send_warn "Sorry, This script had ever been executed..." && exit 1
 
@@ -97,6 +99,7 @@ send_info "backup system files..."
 [ -f ${mysqlCfg} ] && cp ${mysqlCfg} /root/backup && send_info "${mysqlCfg} copy OK!"
 [ -f ${prof} ] && cp ${prof} /root/backup && send_info "${prof} copy OK!"
 
+
 sleep $spNum
 
 send_info "create basic folders..."
@@ -108,6 +111,8 @@ send_info "create basic folders..."
 [ ! -d /root/nginx ] && mkdir nginx && send_success "nginx directory created OK!"
 [ ! -d /root/go ] && mkdir go && send_success "golang directory created OK!"
 [ ! -d /root/java ] && mkdir java && send_success "java directory created OK!"
+
+[ ! -d ${dataDir} ] && mkdir ${dataDir} && send_success "${dataDir} directory created OK!"
 
 sleep $spNum
 
