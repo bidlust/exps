@@ -64,6 +64,7 @@ mysqlCfg="/etc/my.cnf"
 hostname="slt-dev"
 osVersion="/etc/redhat-release"
 lockfile="/tmp/slt-dev"
+prof="/etc/profile"
 spNum=3
 
 [ -f ${lockfile} ] && send_warn "Sorry, This script had ever been executed..." && exit 1
@@ -76,13 +77,13 @@ sleep $spNum
 	exit 1
 }
 
-send_info "To check OS Version..."
+# send_info "To check OS Version..."
 # [ ! -f osVersion ] && send_error "OS Version Check Error! ${osVersion} not found..." && exit 1
-[ -z `grep "CentOS Linux release 7" ${osVersion}` ] && send_error "Sorry, this script file only fit CentOS Linux release 7！" && exit 1
+# [ -z `grep "CentOS Linux release 7" ${osVersion}` ] && send_error "Sorry, this script file only fit CentOS Linux release 7！" && exit 1
 echo "" > /tmp/slt-dev
 echo "# created at `date +"%Y-%m-%d %H:%M:%S"`" > ${lockfile}
 
-sleep $spNum
+# sleep $spNum
 
 send_info "backup system files..."
 [ ! -d /root/backup ] && mkdir /root/backup
@@ -94,6 +95,7 @@ send_info "backup system files..."
 [ -f ${sysCfg} ] && cp ${sysCfg} /root/backup && send_info "${sysCfg} copy OK!"
 [ -f ${repoCfg} ] && cp ${repoCfg} /root/backup && send_info "${repoCfg} copy OK!"
 [ -f ${mysqlCfg} ] && cp ${mysqlCfg} /root/backup && send_info "${mysqlCfg} copy OK!"
+[ -f ${prof} ] && cp ${prof} /root/backup && send_info "${prof} copy OK!"
 
 sleep $spNum
 
@@ -115,7 +117,7 @@ hostnamectl set-hostname $hostname && send_success "set hostname OK!"
 sleep $spNum
 
 [ -f ${repoCfg} ] && {
-	send_info "Change Yum Repos Source To Aliyun>>>"
+	send_info "Change Yum Repos Source To HuaWeiCloud>>>"
 	mv ${repoCfg} /etc/yum.repos.d/CentOS-Base.repo.backupe
 	# wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
 	curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.myhuaweicloud.com/repo/CentOS-Base-7.repo
@@ -329,98 +331,4 @@ EOF
 
 sysctl -p
 
-# 安装nginx
-send_info "Install Nginx>>>"
-sleep $spNum
-yum install -y zlib zlib-devel openssl openssl-devel pcre pcre-devel 
-yum install -y install nginx 
-
-send_info "Install Mariadb>>>"
-sleep $spNum
-[ ! -d /var/log/mysql ] && mkdir /var/log/mysql && send_success "mysql log folder created OK!"
-[ ! -z `rpm -qa|grep maria` ] && {
-	send_info "remove mariadb packages..."
-	rpm -e --nodeps `rpm -qa|grep maria` && send_success "mariadb packages removed OK!" || send_error "mariadb packages removed Failed!"
-}
-send_info "download mariadb init shell script..."
-wget -P /tmp/ https://downloads.mariadb.com/MariaDB/mariadb_repo_setup && send_success "mariadb install script download OK!" || send_error "script download Failed!"
-[ -f /tmp/mariadb_repo_setup ] && {
-	sh /tmp/mariadb_repo_setup && yum install -y MariaDB-server MariaDB-client
-}
-echo "# created at `date +"%Y-%m-%d %H:%M:%S"`" > ${mysqlCfg}
-cat >> ${mysqlCfg} << EOF
-[client]
-port = 3306
-socket = /tmp/mysql.sock  
-default-character-set=utf8mb4 
-[mysqld]
-server-id = 1
-port = 3306
-bind-address = 0.0.0.0
-user = mysql 
-basedir = /var/lib/mysql
-datadir =  /var/lib/mysql
-tmpdir = /tmp 
-#skip-name-resolve
-pid-file = /var/lib/mysql/mysql.pid
-socket = /tmp/mysql.sock 
-default_storage_engine = InnoDB
-default_tmp_storage_engine = InnoDB
-character-set-server = utf8mb4
-collation_server=utf8mb4_general_ci
-init_connect='SET NAMES utf8mb4'
-lower_case_table_names = 1
-max_connections = 10240
-max_connect_errors = 10000
-open_files_limit = 65535
-interactive_timeout = 1800 
-wait_timeout = 1800 
-back_log = 900
-max_allowed_packet = 128M
-tmp_table_size = 16M
-max_heap_table_size = 16M
-query_cache_type = 1
-query_cache_size = 128M 
-query_cache_limit = 2M
-sort_buffer_size = 2M
-join_buffer_size = 2M
-
-general_log = 0
-general_log_file = /var/log/mysql/general.log
-log-error = /var/log/mysql/error.log 
-slow_query_log = 1
-long_query_time = 2
-log_throttle_queries_not_using_indexes = 0
-slow_query_log_file = /var/log/mysql/slow.log 
-log-queries-not-using-indexes = 1
-
-#log_bin = /var/log/mysql/mysql-bin.log
-
-
-[mysqldump]
-quick
-max_allowed_packet = 512M
-
-[mysql]
-auto-rehash
-socket = /tmp/mysql.sock
-default-character-set=utf8mb4
-
-EOF
-
-send_info "set mysql config file auth..."
-[ -z `grep mysql /etc/passwd` ] && groupadd mysql && useradd -g mysql mysql -M -s /sbin/nologin
-chown mysql:mysql /etc/my.cnf 
-
-sleep $spNum
-
-send_info "To start mariadb..."
-systemctl start mariadb.service 
-
-
-send_info "Install PHP7>>>"
-sleep $spNum
-yum -y install wget vim pcre pcre-devel openssl openssl-devel libicu-devel gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel ncurses ncurses-devel curl curl-devel krb5-devel libidn libidn-devel openldap openldap-devel nss_ldap jemalloc-devel cmake boost-devel bison automake libevent libevent-devel gd gd-devel libtool* libmcrypt libmcrypt-devel mcrypt mhash libxslt libxslt-devel readline readline-devel gmp gmp-devel libcurl libcurl-devel openjpeg-devel
-rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-yum -y install php72w php72w-cli php72w-common php72w-devel php72w-embedded php72w-fpm php72w-gd php72w-mbstring php72w-mysqlnd php72w-opcache php72w-pdo php72w-xml php72w-bcmath 
+send_success "OS Init OK!"
