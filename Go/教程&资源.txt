@@ -3,3 +3,6 @@ https://studygolang.com/articles/14503
 
 2.Golang面向并发的内存模型
 https://www.jianshu.com/p/6a93e6e01a99
+
+3. influxdb
+https://jasper-zhang1.gitbooks.io/influxdb/content/Guide/writing_data.html
