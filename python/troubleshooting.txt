@@ -1,0 +1,39 @@
+1.sqlalchemy查询
+
+Flask-SQLAlchemy 的 query 是直接查询 model，查出来的一定是一个 model 对象。
+
+如果要查询单个字段的话，应该用 session 去 query model。
+
+a = db.session.query(Page.title, Page.page).all()
+
+print(a)
+
+b = Page.query.with_entities(Page.title, Page.page).all()
+
+print(b)
+
+这两个查询返回的都是一个列表，列表内的元素是一个元组，不过不是 Python 内置的元组，是 sqlalchemy.util._collections.KeyedTuple。
+
+
+2.
+Jinja2还包含range函数，该函数返回从start到end - 1的一系列数字，因此您可以将其与random一起使用：
+
+Your lucky number is: {{ range(1, 51) | random }}
+
+3.
+sqlalchemy:
+https://www.jianshu.com/p/d08a63170714
+https://www.cnblogs.com/pythonClub/p/10354935.html
+https://www.cnblogs.com/jingqi/p/8059673.html
+https://blog.csdn.net/weixin_41790086/article/details/80540773
+https://www.jianshu.com/p/f0c1de5afe9d
+
+<a href="https://sm.ms/image/HrdKu5LPzBywbUN" target="_blank"><img src="https://i.loli.net/2020/09/05/HrdKu5LPzBywbUN.jpg" ></a>
+
+https://u.pcloud.link/publink/show?code=XZrVu0XZiHaVAmSWdfpz05DseBbIXHw2xNQ7
+
+$("#attach_id").val(data.response.data); 		
+
+4.
+nignx多个二级域名解析
+https://juejin.im/post/6847902219812274190

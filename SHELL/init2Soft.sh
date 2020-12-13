@@ -168,6 +168,8 @@ sleep $spNum
 
 send_info "To start mariadb..."
 systemctl start mariadb.service 
+firewall-cmd --add-port=3306/tcp --permanent
+firewall-cmd --reload
 
 
 send_info "Install PHP7>>>"
@@ -199,6 +201,9 @@ sleep $spNum
 send_info "Install Redis..."
 yum install -y redis 
 systemctl start redis.service 
+firewall-cmd --add-port=6379/tcp --permanent
+firewall-cmd --reload
+
 
 send_info "Install mongodb..."
 [ ! -d ${mglog} ] && mkdir -p ${mglog} && send_success "create ${mglog}  OK!"
@@ -222,6 +227,32 @@ chown admin:admin -R ${mglog}
 chown admin:admin -R ${mgdata}
 source ${prof}
 sudo admin mongod --config /usr/local/mongodb/mongod.cfg
+firewall-cmd --add-port=27017/tcp --permanent
+firewall-cmd --reload
+
+
+sleep $spNum
+# https://tecadmin.net/install-latest-nodejs-amazon-linux/
+send_info "Install nodejs..."
+curl -sL https://rpm.nodesource.com/setup_14.x | sudo -E bash -
+yum install -y nodejs
+
+sleep $spNum 
+send_info "Install influxdb..."
+cat <<EOF | sudo tee /etc/yum.repos.d/influxdb.repo
+[influxdb]
+name = InfluxDB Repository - RHEL \$releasever
+baseurl = https://repos.influxdata.com/rhel/\$releasever/\$basearch/stable
+enabled = 1
+gpgcheck = 1
+gpgkey = https://repos.influxdata.com/influxdb.key
+EOF
+
+yum install influxdb
+firewall-cmd --add-port=8086/tcp --permanent
+firewall-cmd --reload
+systemctl start influxdb && sudo systemctl enable influxdb
+
 
 
 
