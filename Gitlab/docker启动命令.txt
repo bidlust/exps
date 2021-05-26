@@ -1,0 +1,17 @@
+1. 创建映射目录
+mkdir /home/gitlab
+2. docker 启动命令
+docker run \
+    -p 443:443 -p 80:80 -p 22:22 \
+    --name gitlab \
+    --volume /home/gitlab/config:/etc/gitlab \
+    --volume /home/gitlab/logs:/var/log/gitlab \
+    --volume /home/gitlab/data:/var/opt/gitlab \
+    gitlab/gitlab-ce
+	
+3. 设置域名
+file: gitlab.rb 
+配置项： external_url 
+
+
+参考： https://www.jianshu.com/p/6787a8b843d8 

@@ -38,7 +38,7 @@ character-set-server = utf8mb4
 
 collation_server=utf8mb4_general_ci
 
-init_connect='SET NAMES utf8mbb4'
+init_connect='SET NAMES utf8mb4'
 
 lower_case_table_names = 1
 

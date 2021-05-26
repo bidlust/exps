@@ -1,0 +1,8 @@
+1. 初始化命令：
+./bin/mysqld -I --user=mysql --basedir=/usr/local/mysql8 --datadir=/data/mysql 
+
+2. 用户授权：
+2.1). 创建用户
+create user 'discuz'@'%' identified with mysql_native_password by 'Paic2018!@';
+2.2). 用户授权
+grant all privileges on discuzDB.* to 'discuz'@'%' with grant option;

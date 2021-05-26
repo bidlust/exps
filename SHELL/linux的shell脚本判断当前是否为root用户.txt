@@ -1,0 +1,14 @@
+whoami（显示当前用户的用户名）
+if [ `whoami` = "root" ];then
+	echo "root用户！"
+else
+	echo "非root用户！"
+fi
+
+
+id -u （显示当前用户的uid）
+if [ `id -u` -eq 0 ];then
+	echo "root用户!"
+else
+	echo "非root用户!"
+fi

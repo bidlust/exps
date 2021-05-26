@@ -1,0 +1,1 @@
+docker run -d --name jenkins -p 10060:8080 -u 0 -v /home/jenkins:/var/jenkins_home jenkins:2.60.3

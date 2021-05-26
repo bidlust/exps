@@ -62,14 +62,14 @@ limitCfg="/etc/security/limits.conf"
 sysCfg="/etc/sysctl.conf"
 repoCfg="/etc/yum.repos.d/CentOS-Base.repo"
 mysqlCfg="/etc/my.cnf"
-hostname="slt-dev"
+hostname="maxscale"
 osVersion="/etc/redhat-release"
 lockfile="/tmp/slt-dev"
 prof="/etc/profile"
 spNum=3
 dataDir="/var/data"
 yumSource=" /etc/yum.repos.d/CentOS-Base.repo"
-
+baseCommand=("wget" "curl" "lrzsz" "dos2unix" "netstat-tools" "net-tools" "nmap" "makecache" "unzip" "zip" "make" "cmake" "autoconf" "telnet")
 
 
 [ -f ${lockfile} ] && send_warn "Sorry, This script had ever been executed..." && exit 1
@@ -80,6 +80,12 @@ sleep $spNum
 [ `whoami` != "root" ] && {
 	send_error "the role execute this script must be root!"
 	exit
+}
+
+# check AWS EC Server 
+[ $(dmidecode --string system-uuid | grep ec2 | wc -l) -lt 1 ] && {
+	send_error "this function script only fit AWS EC2 Server!"
+	exit 
 }
 
 # send_info "To check OS Version..."
@@ -120,81 +126,26 @@ send_info "create basic folders..."
 
 sleep $spNum
 
-# check wget command
-[ `rpm -qa | grep wget | wc -l` -lt 1 ] && {
-  send_info "install wget command..."
-  yum -y install wget curl 
+for cmd in ${baseCommand[@]}
+do
+	[ `rpm -qa | grep $cmd | wc -l` -lt 1 ] && {
+		send_info "install $cmd command..."
+		yum -y install $cmd 
 } || {
-	send_info "wget command check OK!"
+	send_info "$cmd command check OK!"
 }
-
-# change yum source mirrors
-wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
-yum makecache
-
-send_success "yum source mirrors changed to aliyun!"
+done 
 
 #设置hostname
-hostnamectl set-hostname $hostname && send_success "set hostname OK!"
-
-sleep $spNum
-
+[  ! -z "$hostname" ] && {
+	send_info "begin to set hostname.."
+	hostnamectl set-hostname $hostname && send_success "set hostname OK! hostname: ${hostname}"
+}
 
 send_info "Begin to update system..."
 sleep $spNum
+
 yum -y update 
-
-
-send_info "install basic develop tools..."
-sleep $spNum
-yum install -y gcc gcc-c++ lrzsz* netstat-tools net-tools nmap makecache unzip zip make autoconf dos2unix wget 
-
-send_info "config ssh port to ${sshPort}..."
-sleep $spNum
-
-# 检查ssh Port是否打开；
-# 如打开则关闭；
-[ ! -z `grep -E "^Port\s+[0-9]+" ${sshCfg}`  ] && {
-	sed -i 's/^Port\s[0-9]/#&/' ${sshCfg}
-}
-#先取行号，在下一行添加；
-rowNum=`grep -nE "Port\s+[0-9]+" ${sshCfg} | awk 'END{print}' | cut -d: -f1`
-[ ! -z $rowNum ] && {
-	sed -i "${rowNum}a Port ${sshPort}" ${sshCfg} && send_success "set ssh port - ${sshPort} OK!"
-}
-
-sleep $spNum
-
-send_info "restart sshd..."
-systemctl restart sshd
-
-sleep $spNum
-
-# 设置管理账号；
-[ ! -z `grep $adm /etc/passwd` ] && send_info "${adm} has been created!" || {
-	send_info "add admin account..."
-	sleep 1
-	useradd -m admin && send_success "user $adm created OK!"
-	echo $pwd | passwd $adm --stdin  > /dev/null && send_success "user $adm password set OK!"
-}
-
-sleep $spNum
-
-# 添加sudo权限；
-[ -z `grep ${adm} /etc/sudoers` ] && {
-	send_info "add $adm to sudoers file..."
-	sleep 1
-	sudoNum=`grep -nE "^root(.*)ALL=\(ALL\)(.*)ALL" /etc/sudoers | awk 'END {print}' | cut -d: -f1`
-	[ ! -z sudoNum ] && sed -i "${sudoNum}a $adm  ALL=(ALL)  NOPASSWD:ALL" /etc/sudoers && send_info "add ${adm} to sudoers OK!"
-}
-
-sleep $spNum
-
-# 禁止root登录；
-rlNum=`grep -nE "^PermitRootLogin\s+yes" ${sshCfg} | awk 'END{print}' | cut -d: -f1`
-[ ! -z rlNum  ] && {
-	sed -i "s/^PermitRootLogin/#&/" ${sshCfg}  && sed -i "${rlNum}a PermitRootLogin no" ${sshCfg} && send_success "PermitRootLogin set OK!"
-}
 
 sleep $spNum
 
@@ -203,20 +154,6 @@ sleep $spNum
 	send_info "close selinux..."
 	sed -i 's/enforcing/disabled/' $seCfg && send_info "close selinux OK!" || send_error "close selinux Failed!"
 }
-
-sleep $spNum
-
-# sshPort加入防火墙端口；
-[ -f $fwCfg ] && [ -z `grep ${sshPort} ${fwCfg}` ] && {
-	sed -i "/<\/zone>/i <port port=\"${sshPort}\" protocol=\"tcp\"\/>" ${fwCfg} && send_success "add ${sshPort} to firewall OK!" || send_error "add ${sshPort} to firewall Failed!"
-	sed -i "/<\/zone>/i <port port=\"${mysqlPort}\" protocol=\"tcp\"\/>" ${fwCfg} && send_success "add ${mysqlPort} to firewall OK!" || send_error "add ${mysqlPort} to firewall Failed!"
-	sed -i "/<\/zone>/i <port port=\"${httpPort}\" protocol=\"tcp\"\/>" ${fwCfg} && send_success "add ${httpPort} to firewall OK!" || send_error "add ${httpPort} to firewall Failed!"
-}
-
-# 启动防火墙
-send_info "to start firewalld..."
-systemctl start firewalld 
-firewall-cmd --reload 
 
 sleep $spNum
 
@@ -341,5 +278,25 @@ sysctl -p
 echo "export TMOUT=1200" >> /etc/profile
 source /etc/profile
 
+send_info "install firewalld..."
+yum -y install firewalld
+systemctl start firewalld 
+firewall-cmd --add-port=22/tcp --permanent 
+firewall-cmd --add-port=51028/tcp --permanent 
+firewall-cmd --add-port=80/tcp --permanent 
+firewall-cmd --add-port=10050/tcp --permanent 
+firewall-cmd --add-port=10051/tcp --permanent 
+firewall-cmd --add-port=3306/tcp --permanent 
+firewall-cmd --reload
 
+#set datetime 
+send_info "setting timezone to Shanghai..."
+[ -e /etc/localtime ] && { 
+	cp /etc/localtime /etc/localtime.bak 
+	rm -rf /etc/localtime
+}
+
+[ -e /usr/share/zoneinfo/Asia/Shanghai ] && {
+	ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+}
 send_success "OS Init OK!"
