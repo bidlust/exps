@@ -3,8 +3,11 @@ Description=Zabbix Monitor Agent
 After=syslog.target network.target
 
 [Service]
+Environment="CONFFILE=/usr/local/etc/zabbix_agentd.conf"
 Type=forking
-ExecStart=/usr/sbin/zabbix_agentd
+Restart=always
+KillMode=mixed
+ExecStart=/usr/local/sbin/zabbix_agentd
 User=zabbix
 PrivateTmp=yes
 
