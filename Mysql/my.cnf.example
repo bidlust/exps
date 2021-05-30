@@ -2,7 +2,7 @@
 
 port = 3306
 
-socket = /tmp/mysql.sock  
+socket = /var/lib/mysql/mysql.sock  
 
 default-character-set=utf8mb4 
 
@@ -14,13 +14,13 @@ port = 3306
 
 user = mysql 
 
-basedir = /
+basedir = /usr/local/mysql5.7
 
-datadir = 
+datadir = /data/mysql/
 
 tmpdir = /tmp 
 
-socket = /tmp/mysql.sock 
+socket = /var/lib/mysql/mysql.sock 
 
 transaction_isolation = REPEATABLE-READ
 
@@ -34,7 +34,7 @@ character-set-server = utf8mb4
 
 collation_server=utf8mb4_general_ci
 
-init_connect='SET NAMES utf8mbb4'
+init_connect='SET NAMES utf8mb4'
 
 lower_case_table_names = 1
 
@@ -107,9 +107,9 @@ innodb_flush_method  = O_DIRECT
 
 innodb_file_per_table = 1
 
-innodb_undo_directory = /var/log/innodb/log
+innodb_undo_directory = /var/log/mysql/
 
-innodb_log_group_home_dir = /var/log/innodb/log
+innodb_log_group_home_dir = /var/log/mysql/
 
 innodb_log_file_size = 128M
 
@@ -184,7 +184,7 @@ log-queries-not-using-indexes = 1
 
 auto-rehash
 
-socket = /tmp/mysql.sock
+socket = /var/lib/mysql/mysql.sock
 
 default-character-set=utf8mb4
 

@@ -1,0 +1,15 @@
+1. 建立快捷方式
+ln -s /usr/local/prometheus/prometheus /usr/bin/prometheus
+或者直接将prometheus可执行文件拷贝到/usr/bin目录
+cp /usr/local/prometheus/prometheus  /usr/bin/
+cp /usr/local/prometheus/prometheus.yml /etc/ 
+
+2. 建立数据存储目录
+mkdir -p /data/prometheus
+
+3. 启动
+nohup prometheus \
+--config.file=/etc/prometheus.yml \
+--storage.tsdb.path=/data/prometheus \
+--storage.tsdb.retention.time=7d \
+--web.enable-lifecycle >> /var/log/prometheus.log 
